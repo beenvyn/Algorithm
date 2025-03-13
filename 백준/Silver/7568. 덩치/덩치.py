@@ -9,3 +9,5 @@ for i in range(n):
                 answer[i] += 1
 
 print(*answer) 
+
+# 나보다 덩치 큰 애가 나타날 때 내 등수가 내려가도록 하면 된다.
