@@ -1,38 +1,33 @@
-from collections import deque
 import sys
-
+from collections import deque
 input = sys.stdin.readline
-dist = 1
-row, col = map(int, input().split())
-graph = [input().strip() for _ in range(row)]
 
-visited = [[[False, False] for _ in range(col)] for _ in range(row)]
+rows, cols = map(int, input().split())
+graph = [input().rstrip() for _ in range(rows)]
 
-q = deque([(0,0,1,1)])
-visited[0][0][1] = True
+dirs = [(0,1),(0,-1),(1,0),(-1,0)]
+visited = [[[0,0] for _ in range(cols)] for _ in range(rows)]
 
-dr = [0,0,-1,1]
-dc = [-1,1,0,0]
+que = deque([(0,0,1,1)])
+visited[0][0][0] = 1
 
-while q:
-    r, c, flag, dist = q.popleft()
+while que:
+    r, c, dist, flag = que.popleft()
 
-    if r == row - 1 and c == col - 1:
+    if r == rows - 1 and c == cols - 1:
         print(dist)
-        sys.exit()
+        sys.exit(0)
 
-    for i in range(4):
-        nr = r + dr[i]
-        nc = c + dc[i]
+    for d in dirs:
+        nr, nc = r + d[0], c + d[1]
 
-        if 0 <= nr < row and 0 <= nc < col:
-            if graph[nr][nc] == '0' and not visited[nr][nc][flag]:
-                q.append((nr,nc,flag,dist+1))
-                visited[nr][nc][flag] = True
+        if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc][flag]:
+            if flag and graph[nr][nc] == "1":
+                que.append((nr,nc,dist+1,0))
+                visited[nr][nc][0] = 1
             
-            # 벽 부수기 
-            elif graph[nr][nc] == '1' and flag == 1 and not visited[nr][nc][0]:
-                q.append((nr,nc,0,dist+1))
-                visited[nr][nc][0] = True
-else:
-    print(-1)
+            if graph[nr][nc] == "0":
+                que.append((nr,nc,dist+1,flag))
+                visited[nr][nc][flag] = 1
+        
+print(-1)
