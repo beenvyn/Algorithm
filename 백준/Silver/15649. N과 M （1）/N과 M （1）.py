@@ -1,18 +1,20 @@
-n, m = map(int, input().split())
+import sys
+input = sys.stdin.readline
 
+n, m = map(int, input().split())
 answer = []
 
-def backtrack(cur):
-    if len(cur) == m:
-        answer.append(cur[:])
+def backtrack(curr):
+    if len(curr) == m:
+        answer.append(curr[:])
         return
-    for i in range(1, n+1):
-        if i not in cur:
-            cur.append(i)
-            backtrack(cur)
-            cur.pop()
+
+    for num in range(1,n+1):
+        if num not in curr:
+            curr.append(num)
+            backtrack(curr)
+            curr.pop()
 
 backtrack([])
-
-for a in answer:
-    print(*a)
+for x in answer:
+    print(' '.join(map(str,x)))
