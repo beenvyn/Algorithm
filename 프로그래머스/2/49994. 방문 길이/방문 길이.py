@@ -7,10 +7,10 @@ def solution(dirs):
     for d in dirs:
         nx, ny = x + opts[d][0], y + opts[d][1]
         if -5 <= nx <= 5 and -5 <= ny <= 5:
-            cur_route = tuple(sorted(((x,y),(nx,ny))))
-            if cur_route not in visited:
+            if (x,y,nx,ny) not in visited:
+                visited.add((x,y,nx,ny))
+                visited.add((nx,ny,x,y))
                 answer += 1
-                visited.add(cur_route)
             x, y = nx, ny
         
     return answer
