@@ -1,67 +1,67 @@
-import sys
 from collections import deque
-# sys.setrecursionlimit(300000)
+import sys
 input = sys.stdin.readline
 
-rows, cols = map(int, input().split())
-graph = [input() for _ in range(rows)]
+R, C = map(int, input().split())
+grid = [list(input().rstrip()) for _ in range(R)]
 
-for r in range(rows):
-    for c in range(cols):
-        if graph[r][c] == 'R':
-            rsr, rsc = r, c
-        elif graph[r][c] == 'B':
-            bsr, bsc = r, c
-
-visited = set()
 dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-que = deque([(rsr,rsc,bsr,bsc,0)])
-visited.add((rsr,rsc,bsr,bsc))
 
-def move(r,c,dir):
+def move(r, c, d):
     nr, nc = r, c
     while True:
-        nr += dirs[dir][0]
-        nc += dirs[dir][1]
+        nr += dirs[d][0]
+        nc += dirs[d][1]
 
-        if graph[nr][nc] == '#':
-            nr -= dirs[dir][0]
-            nc -= dirs[dir][1]
-            break
-        elif graph[nr][nc] == 'O':
+        if grid[nr][nc] == 'O':
             break
 
+        if grid[nr][nc] == '#':
+            nr -= dirs[d][0]
+            nc -= dirs[d][1]
+            break
     return (nr, nc)
 
+for r in range(R):
+    for c in range(C):
+        if grid[r][c] == 'R':
+            rr, rc = r, c
+        elif grid[r][c] == 'B':
+            br, bc = r, c
+
+que = deque([(rr, rc, br, bc, 0)])
+visited = set()
+visited.add((rr, rc, br, bc))
 
 while que:
     rr, rc, br, bc, cnt = que.popleft()
 
-    if cnt >= 10:
-        continue
+    if cnt > 10:
+        print(0)
+        sys.exit()
     
-    for dir in range(4):
-        nrr, nrc = move(rr,rc,dir)
-        nbr, nbc = move(br,bc,dir)
+    if grid[rr][rc] == 'O':
+        print(1)
+        sys.exit()
 
-        if graph[nbr][nbc] == 'O':
+    for d in range(4):
+        nrr, nrc = move(rr, rc, d)
+        nbr, nbc = move(br, bc, d)
+
+        if grid[nbr][nbc] == 'O':
             continue
 
-        if graph[nrr][nrc] == 'O':
-            print(1)
-            sys.exit(0)
-        
         if nrr == nbr and nrc == nbc:
-            if abs(nrr - rr) + abs(nrc - rc) < abs(nbr - br) + abs(nbc - bc):
-                nbr -= dirs[dir][0]
-                nbc -= dirs[dir][1]
+            if abs(nrr - rr) + abs(nrc - rc) > abs(nbr - br) + abs(nbc - bc):
+                nrr -= dirs[d][0]
+                nrc -= dirs[d][1]
             else:
-                nrr -= dirs[dir][0]
-                nrc -= dirs[dir][1]
-
-        if (nrr,nrc,nbr,nbc) not in visited:        
-            que.append((nrr,nrc,nbr,nbc,cnt + 1))
-            visited.add((nrr,nrc,nbr,nbc))
+                nbr -= dirs[d][0]
+                nbc -= dirs[d][1]
+        
+        if (nrr, nrc, nbr, nbc) not in visited:
+            que.append((nrr, nrc, nbr, nbc, cnt + 1))
+            visited.add((nrr, nrc, nbr, nbc))
 
 print(0)
-        
+    
