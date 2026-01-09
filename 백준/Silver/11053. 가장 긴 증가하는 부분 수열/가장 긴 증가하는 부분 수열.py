@@ -1,15 +1,14 @@
 import sys
 input = sys.stdin.readline
 
-n = int(input())
-nums = list(map(int, input().split()))
+N = int(input())
+A = list(map(int, input().split()))
 
-# dp[i]: nums의 i번째 수를 마지막 원소로 쓰는 증가 수열의 최대 길이
-dp = [1] * n
+dp = [1] * N # dp[i]: A[i]를 마지막으로 하는 증가하는 부분 수열의 최대 길이
 
-for i in range(n):
+for i in range(1, N):
     for j in range(i):
-        if nums[i] > nums[j]:
+        if A[i] > A[j]:
             dp[i] = max(dp[j] + 1, dp[i])
 
 print(max(dp))
