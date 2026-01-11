@@ -1,37 +1,37 @@
 import sys
+sys.setrecursionlimit(10**6)
 input = sys.stdin.readline
 
-n = int(input())
+N = int(input())
 nums = list(map(int, input().split()))
-cnt = list(map(int, input().split()))
-ops = ['+', '-', '*', '/']
+opts = list(map(int, input().split())) # +, - , *, /
 
-def apply(x,y,op):
-    if op == '+':
-        return x + y
-    elif op == '-':
-        return x - y
-    elif op == '*':
-        return x * y
-    else:
-        if x < 0 and y != 0:
-            return -((-x) // y)
-        return x // y
+min_answer = float('inf')
+max_answer = -float('inf')
 
-answer = []
-def backtrack(cur, idx):
-    if idx == n:
-        answer.append(cur)
+# 다음에 사용할 숫자 인덱스, 현재 계산된 값
+def dfs(idx, val):
+    global min_answer, max_answer
+    if idx == N:
+        min_answer = min(min_answer, val)
+        max_answer = max(max_answer, val)
         return
 
     for i in range(4):
-        if cnt[i] <= 0:
-            continue
-        cnt[i] -= 1
-        backtrack(apply(cur,nums[idx],ops[i]), idx+1)
-        cnt[i] += 1
-
-backtrack(nums[0], 1)
-
-print(max(answer))
-print(min(answer))
+        next_val = 0
+        if opts[i] > 0:
+            if i == 0:
+                next_val = val + nums[idx]
+            elif i == 1:
+                next_val = val - nums[idx]
+            elif i == 2:
+                next_val = val * nums[idx]
+            else:
+                next_val = int(val / nums[idx])
+            opts[i] -= 1
+            dfs(idx + 1, next_val)
+            opts[i] += 1
+                
+dfs(1, nums[0])
+print(max_answer)
+print(min_answer)
