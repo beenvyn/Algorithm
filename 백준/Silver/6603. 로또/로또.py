@@ -1,27 +1,23 @@
 import sys
+sys.setrecursionlimit(10**6)
 input = sys.stdin.readline
 
-while True:
-    input_arr = list(map(int, input().split()))
-    k = input_arr[0]
+def dfs(idx, cur):
+    if len(cur) == 6:
+        print(' '.join(map(str, cur)))
+        return
+        
+    for i in range(idx, k):
+        cur.append(nums[i])
+        dfs(i + 1, cur[:])
+        cur.pop()
 
+while True:
+    arr = list(map(int, input().split()))
+    k = arr[0]
     if k == 0:
         break
 
-    nums_arr = input_arr[1:]
-    answer = []
-
-    def backtrack(comb, idx):
-        if len(comb) == 6:
-            answer.append(comb[:])
-        
-        for i in range(idx,k):
-            comb.append(nums_arr[i])
-            backtrack(comb,i+1)
-            comb.pop()
-
-    backtrack([], 0)
-
-    for a in answer:
-        print(' '.join(map(str,a)))
+    nums = arr[1:]
+    dfs(0, [])
     print()
