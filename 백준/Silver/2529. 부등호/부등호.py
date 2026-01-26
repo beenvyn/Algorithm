@@ -2,29 +2,28 @@ import sys
 input = sys.stdin.readline
 
 k = int(input())
-brackets = input().split()
-visited = [False] * 10
+brackests = input().rstrip().split()
 answer = []
 
-def check(x,y,oper):
-    if oper == '<':
-        return x < y
-    else:
-        return x > y
-
-def backtrack(idx, cur):
-    if idx == k+1:
+used = [False] * 10
+# 현재 숫자 문자열로, 사용한 괄호 갯수
+def dfs(cur, idx):
+    if idx == k:
         answer.append(cur)
         return
-    
-    for i in range(10):
-        if not visited[i]:
-            if idx == 0 or check(int(cur[idx-1]),i,brackets[idx-1]):
-                visited[i] = True
-                backtrack(idx+1, cur+str(i))
-                visited[i] = False
 
-backtrack(0,'')
+    for n in range(10):
+        if not used[n]:
+            if (brackests[idx] == '<' and int(cur[-1]) < n) or (brackests[idx] == '>' and int(cur[-1]) > n):
+                used[n] = True
+                dfs(cur + str(n), idx + 1)
+                used[n] = False
+# 맨 앞에 숫자 0~9일 경우           
+for i in range(10):
+    used[i] = True
+    dfs(str(i), 0)
+    used[i] = False
 
-print(max(answer))
-print(min(answer))
+answer.sort()
+print(answer[-1])
+print(answer[0])
