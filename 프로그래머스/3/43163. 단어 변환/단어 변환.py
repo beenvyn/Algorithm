@@ -1,18 +1,19 @@
 from collections import deque
 
 def solution(begin, target, words):
-    q = deque([(begin, 0)])
-    visited = {w : False for w in words}
+    n = len(words)
+    visited = [False] * n
+    que = deque([(begin, 0)])
     
-    while q:
-        cur_word, cnt = q.popleft()
+    while que:
+        cur_word, cnt = que.popleft()
         
         if cur_word == target:
             return cnt
         
-        for word in words:
-            if sum([a != b for a, b in zip(cur_word, word)]) == 1 and not visited[word]:
-                q.append((word, cnt + 1))
-                visited[word] = True
-            
+        for i in range(n):
+            if not visited[i] and sum(a != b for a, b in zip(words[i], cur_word)) == 1:
+                que.append((words[i], cnt + 1))
+                visited[i] = True
+    
     return 0
