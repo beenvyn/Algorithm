@@ -1,18 +1,20 @@
 def solution(s):
-    answer = len(s)
+    n = len(s) 
+    answer = n
     
-    for unit in range(1, len(s) // 2 + 1):
-        word = ''
-        prev = s[:unit]
+    for l in range(1, int(n//2) + 1):
+        prev = s[:l]
         cnt = 1
-        
-        for i in range(unit, len(s), unit):
-            if prev == s[i:i+unit]:
+        word = ''
+        for i in range(l, n, l):
+            cur_word = s[i:i+l]
+            if prev == cur_word:
                 cnt += 1
             else:
                 word += str(cnt) + prev if cnt > 1 else prev
-                prev = s[i:i+unit]
+                prev = cur_word
                 cnt = 1
         word += str(cnt) + prev if cnt > 1 else prev
-        answer = min(len(word), answer)
+        answer = min(answer, len(word))
+                
     return answer
