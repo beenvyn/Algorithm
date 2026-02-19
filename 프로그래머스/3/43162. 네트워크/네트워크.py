@@ -1,14 +1,21 @@
 def solution(n, computers):
     answer = 0
+    
+    graph = [[] for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if computers[i][j] == 1 and i != j:
+                graph[i].append(j)
+                graph[j].append(i)
+    
     visited = [False] * n
     
-    def dfs(com):
-        nonlocal visited
-        visited[com] = True
+    def dfs(node):
+        visited[node] = True
         
-        for i in range(n):
-            if computers[com][i] == 1 and not visited[i]:
-                dfs(i)
+        for v in graph[node]:
+            if not visited[v]:
+                dfs(v)
     
     for i in range(n):
         if not visited[i]:
