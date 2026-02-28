@@ -1,15 +1,11 @@
 def solution(n, q, ans):
     answer = 0
+    q_sets = [set(row) for row in q]
     m = len(q)
     
     def check(case):
         for i in range(m):
-            cnt = 0
-            for x in sorted(q[i]):
-                for c in case:
-                    if x == c:
-                        cnt += 1
-            if cnt != ans[i]:
+            if len(case & q_sets[i]) != ans[i]:
                 return False
         return True
                         
@@ -17,7 +13,7 @@ def solution(n, q, ans):
     def comb(idx, cur):
         nonlocal answer
         if len(cur) == 5:
-            if check(sorted(cur)):
+            if check(set(cur)):
                 answer += 1
             return
         
