@@ -3,18 +3,26 @@ import heapq
 def solution(book_time):
     answer = 0
     book_mins = []
+    
+    def get_mins(s):
+        h, m = map(int, s.split(':'))
+        return h * 60 + m
+    
     for start, end in book_time:
-        start_h, start_m = map(int,start.split(':'))
-        end_h, end_m = map(int,end.split(':'))
-        book_mins.append((start_h*60+start_m, end_h*60+end_m))
+        book_mins.append([get_mins(start), get_mins(end) + 10])
+    
     book_mins.sort()
     
-    using_heap = []
+    heap = []
     for start, end in book_mins:
-        while using_heap and using_heap[0] + 10 <= start:
-            heapq.heappop(using_heap)
+        # 가장 빨리 비는 방(heap[0])이 현재 예약 시작 시간보다
+        # 빠르거나 같으면 그 방은 재사용 가능
+        while heap and start >= heap[0]:
+            heapq.heappop(heap) # 방 제거
+            
+        heapq.heappush(heap, end)
         
-        heapq.heappush(using_heap,end)
-        answer = max(answer,len(using_heap))
+        # 현재 사용 중인 방의 개수 = len(heap)
+        answer = max(answer, len(heap))
     
     return answer
