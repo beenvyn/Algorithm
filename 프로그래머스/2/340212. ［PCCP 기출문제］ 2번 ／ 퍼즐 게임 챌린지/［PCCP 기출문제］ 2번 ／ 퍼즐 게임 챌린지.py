@@ -1,24 +1,31 @@
 def solution(diffs, times, limit):
-    def get_time(level):
-        time = times[0] # 0번 퍼즐은 이전 퍼즐이 없으므로
+    
+    # 제한 시간 내에 풀 수 있는지 판단하는 함수
+    def solve(level):
+        total = times[0]
+        
         for i in range(1, len(diffs)):
-            if diffs[i] > level:
-                time += (times[i] + times[i-1]) * (diffs[i] - level)
-            time += times[i]
-            # 가지치기(시간 초과면 더 볼 필요 없음)
-            if time > limit:
-                return time
-        return time
+            total += times[i] # 기본 푸는 시간
+            diff = diffs[i]
+            if level < diff:
+                wrong = diff - level
+                total += (times[i] + times[i-1]) * wrong
+        
+        if total <= limit:
+            return True
+        else:
+            return False
     
-    lo, hi = 1, max(diffs)
-    answer = 0
-    
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if get_time(mid) <= limit: # 더 낮은 숙련도로도 가능한지 확인해야 하므로 범위를 왼쪽으로 줄임
-            hi = mid - 1
+    # 이분 탐색으로 정답 후보를 탐색
+    # level이 작아질수록 총 시간이 커지고, 커질수록 총 시간이 줄어들기 때문에 이분 탐색이 가능
+    l, r = 1, max(diffs)
+    while l <= r:
+        mid = (l + r) // 2
+        
+        if solve(mid): # 가능하면
             answer = mid
-        else: # 제한 시간을 넘기니까 숙련도를 올려줘야 함
-            lo = mid + 1
+            r = mid - 1 # 더 낮은 레벨로도 가능한지 확인
+        else:
+            l = mid + 1
         
     return answer
