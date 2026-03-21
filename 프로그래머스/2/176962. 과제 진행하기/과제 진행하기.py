@@ -1,33 +1,41 @@
 def solution(plans):
-    stack = [] # 멈춰둔 / 진행중이던 과제들 : [과제 이름, 실행 시간]
     answer = []
     
-    for i in range(len(plans)):
-        h, m = map(int, plans[i][1].split(':'))
-        plans[i][1] = h * 60 + m
-        plans[i][2] = int(plans[i][2])
+    def to_mins(s):
+        h, m = map(int, s.split(':'))
+        return h * 60 + m
     
-    plans.sort(key=lambda x:x[1])
+    parsed_plans = [] # [과제 이름, 시작 시간, 실행 시간]
+    for name, start, playtime in plans:
+        parsed_plans.append([name, to_mins(start), int(playtime)])
+    
+    parsed_plans.sort(key=lambda x:x[1]) # 시작 시간 빠른 순으로 정렬
+    
+    stack = [] # [멈춰둔 과제 이름, 남은 시간]
     
     for i in range(len(plans) - 1):
-        stack.append([plans[i][0], plans[i][2]]) # 현재 과제를 스택에 쌓는다(시작됨)
-        gap = plans[i+1][1] - plans[i][1] # 현재 과제와 다음 과제 사이의 빈 시간
+        name, start, playtime = parsed_plans[i] # 현재 과제
+        available = parsed_plans[i + 1][1] - start # 현재 과제에 할당된 시간
         
-        # 빈 시간 동안 스택 상단 과제를 가능한 만큼 처리
-        while stack and gap:
-            cur_time = stack[-1][1] # 현재 과제의 남은 실행 시간
+        if available >= playtime: # 현재 과제 끝낼 수 있음
+            answer.append(name)
+            remain_time = available - playtime
             
-            if cur_time <= gap: # 다음 과제 전까지 완료 가능한 경우
-                name, time = stack.pop()
-                answer.append(name)
-                gap -= time
-            else: # 다음 과제 전까지 완료 불가능한 경우
-                stack[-1][1] -= gap # 빈 시간 까지만 실행한다
-                gap = 0
+            while remain_time > 0 and stack:
+                prev_name, prev_time = stack.pop()
+                if remain_time >= prev_time: # 멈춘 과제의 남은 실행 시간이 다음 과제까지 남은 시간보다 적으면
+                    remain_time -= prev_time
+                    answer.append(prev_name) # 멈춘 과제 다 처리
+                else:
+                    stack.append([prev_name, prev_time - remain_time])
+                    remain_time = 0
+        else:
+            stack.append([name, playtime - available])     
     
-    stack.append([plans[-1][0], plans[-1][2]]) # 마지막 과제
+    answer.append(parsed_plans[-1][0]) # 마지막 과제는 무조건 끝낼 수 있음
     
-    while stack: # 이후 남아있는 과제들을 LIFO 순서로 마무리
-        answer.append(stack.pop()[0])
+    while stack: # 한 바퀴 돌렸을 때 완성 못한 과제들
+        name, _ = stack.pop()
+        answer.append(name)
 
     return answer
