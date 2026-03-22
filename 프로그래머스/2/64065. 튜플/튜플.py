@@ -1,14 +1,13 @@
 def solution(s):
     answer = []
     
-    parts = s[2:-2].split('},{')
-    sets = [set(map(int, p.split(','))) for p in parts]
-    sets.sort(key=len)
+    s_arr = s[2:-2].split('},{')
+    s_arr.sort(key=lambda x: len(x))
     
-    seen = set()
-    for st in sets:
-        new = st - seen
-        answer += list(new)
-        seen.update(new)
-                
+    for i in range(len(s_arr)):
+        arr = list(map(int, s_arr[i].split(',')))
+        for n in arr:
+            if n not in answer:
+                answer.append(n)
+
     return answer
