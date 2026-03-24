@@ -1,36 +1,42 @@
 from collections import deque
 
 def solution(board):
-    n = len(board)
-    m = len(board[0])
-    dx = [0,0,-1,1]
-    dy = [-1,1,0,0]
+    answer = 0
+    rows, cols = len(board), len(board[0])
+    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    visited = [[False] * cols for _ in range(rows)] # 멈출 수 있는 위치만 방문 여부 체크 대상임
     
-    visited = [[False] * m for _ in range(n)]
-    
-    for i in range(m):
-        for j in range(n):
-            if board[j][i] == 'R':
-                sx, sy = i, j
+    for r in range(rows):
+        for c in range(cols):
+            if board[r][c] == 'R':
+                sr, sc = r, c
                 
-    queue = deque([(sx, sy, 0)])
-    
-    while queue:
-        x, y, cnt = queue.popleft()
+    # 한 방향으로 끝까지 미끄러지는 함수
+    def move(r, c, dir_idx):
+        while 0 <= r < rows and 0 <= c < cols and board[r][c] != 'D':
+            r += dirs[dir_idx][0]
+            c += dirs[dir_idx][1]
         
-        if board[y][x] == 'G':
+        r -= dirs[dir_idx][0]
+        c -= dirs[dir_idx][1]
+        
+        return r, c
+    
+    que = deque([(sr, sc, 0)])
+    visited[sr][sc] = True
+
+    while que:
+        r, c, cnt = que.popleft()
+        
+        if board[r][c] == 'G':
             return cnt
         
-        for k in range(4):
-            nx = x
-            ny = y
-            
-            while 0 <= nx + dx[k] < m and 0 <= ny + dy[k] < n and board[ny + dy[k]][nx + dx[k]] != 'D':
-                nx += dx[k]
-                ny += dy[k]
-                
-            if not visited[ny][nx]:
-                queue.append((nx, ny, cnt + 1))
-                visited[ny][nx] = True  
+        for i in range(4):
+            # 해당 방향으로 끝까지 미끄러진 위치
+            nr, nc = move(r, c, i)
+
+            if not visited[nr][nc]:
+                visited[nr][nc] = True
+                que.append((nr, nc, cnt + 1))
     
     return -1
