@@ -1,12 +1,10 @@
 import math
 
 def solution(arr):
-    if len(arr) > 1:
-        answer = (arr[0] * arr[1]) // math.gcd(arr[0], arr[1])
-    else:
-        return arr[0]
+    lcm = arr[0]
     
-    for i in range(2, len(arr)):
-        answer *= arr[i] // math.gcd(answer, arr[i])
+    # 최소 공배수는 쌍 단위로 계산해야 함
+    for a in arr[1:]:
+        lcm = lcm * a // math.gcd(lcm, a)
     
-    return answer
+    return lcm
