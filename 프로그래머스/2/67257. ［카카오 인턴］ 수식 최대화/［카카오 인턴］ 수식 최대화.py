@@ -1,61 +1,62 @@
 def solution(expression):
     answer = 0
-    tokens = []
-    num = ''
+    opts = ['+', '-', '*']
+    
+    # 수식 파싱
+    parsed_exp = []
+    str_num = ''
     
     for x in expression:
-        if x.isdigit():
-            num += x
+        if x in opts:
+            parsed_exp.append(int(str_num))
+            parsed_exp.append(x)
+            str_num = ''
         else:
-            tokens.append(int(num))
-            tokens.append(x)
-            num = ''
-    tokens.append(int(num))
+            str_num += x
+    parsed_exp.append(int(str_num))
     
-    def apply(a, op, b):
-        if op == '+':
-            return a + b
-        if op == '-':
-            return a - b
-        else:
-            return a * b
-    
-    # 숫자, 연산자 분리
-    def calculate(ops):
-        cur = tokens[:]
-        # 우선순위에 따라 연산자 하나씩 처리
-        for op in ops:
+    # 계산 함수
+    def cal(order):
+        arr = parsed_exp[:]
+        
+        for op in order:
             stack = []
             i = 0
-            while i < len(cur):
-                if cur[i] == op:
-                    left = stack.pop()
-                    right = cur[i+1]
-                    stack.append(apply(left, op, right))
-                    i += 2 # 연산자 + 숫자 소비
+            while i < len(arr):
+                if arr[i] == op:
+                    a = stack.pop()
+                    b = arr[i + 1]
+                    
+                    if op == '+':
+                        stack.append(a + b)
+                    elif op == '-':
+                        stack.append(a - b)
+                    else:
+                        stack.append(a * b)
+                        
+                    i += 2
                 else:
-                    stack.append(cur[i])
+                    stack.append(arr[i])
                     i += 1
-            cur = stack # 이번 연산자 처리 결과를 다음 단계로 넘김
-        return abs(cur[0])
-        
-    operators = ['+', '-', '*']
+            arr = stack
+            
+        return abs(arr[0])
+    
     visited = [False] * 3
+    # 연산자 우선순위 순열
     def permutation(cur):
         nonlocal answer
         
         if len(cur) == 3:
-            answer = max(answer, calculate(cur))
+            answer = max(answer, cal(cur))
             return
-        
+            
         for i in range(3):
             if not visited[i]:
                 visited[i] = True
-                cur.append(operators[i])
-                permutation(cur)
+                permutation(cur + [opts[i]])
                 visited[i] = False
-                cur.pop()
-        
+    
     permutation([])
     
     return answer
