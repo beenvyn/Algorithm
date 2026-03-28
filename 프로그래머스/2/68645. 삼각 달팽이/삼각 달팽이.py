@@ -20,9 +20,9 @@ def solution(n):
     
     for moves in range(n, 0, -1): # 이동 칸 수는 n, n-1, ..., 1
         for i in range(moves):
-            nr, nc = r + dirs[dir_idx][0], c + dirs[dir_idx][1]
-            arr[nr][nc] = num
-            r, c = nr, nc
+            r += dirs[dir_idx][0]
+            c += dirs[dir_idx][1]
+            arr[r][c] = num
             num += 1
         dir_idx = (dir_idx + 1) % 3
     
