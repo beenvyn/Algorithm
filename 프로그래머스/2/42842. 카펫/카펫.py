@@ -1,8 +1,8 @@
 def solution(brown, yellow):
-    max_num = max(2,int(yellow // 2) + 1)
-    for i in range(1, max_num):
+    for i in range(1, int(yellow**0.5) + 1):
         if yellow % i == 0:
-            y, x = i, yellow // i
-            total = x * 2 + y * 2 + 4
-            if total == brown:
-                return [x + 2, y + 2]
+            a = yellow // i
+            b = i
+            
+            if a + b + 2 == brown // 2:
+                return [a + 2, b + 2]
