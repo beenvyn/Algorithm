@@ -1,22 +1,24 @@
 from collections import deque
 
 def solution(priorities, location):
-    cnt = 0
+    n = len(priorities)
+    answer = [0] * n
+    order = 1
     
-    # [(2,0), (1,1), (3,2), (2,3)]
-    que = deque([(p, idx) for idx, p in enumerate(priorities)])
+    que = deque([(idx, priority) for idx, priority in enumerate(priorities)])
     
     while que:
-        cur_p, cur_idx = que.popleft()
-        flag = True
+        idx, priority = que.popleft()
         
-        for p, idx in que:
-            if p > cur_p:
-                que.append((cur_p, cur_idx))
+        flag = True # 현재 프로세스가 가장 높은 우선순위인지 여부
+        for i, p in que:
+            if p > priority:
+                que.append((idx, priority))
                 flag = False
                 break
         
         if flag:
-            cnt += 1
-            if cur_idx == location:
-                return cnt
+            answer[idx] = order
+            order += 1
+        
+    return answer[location]
