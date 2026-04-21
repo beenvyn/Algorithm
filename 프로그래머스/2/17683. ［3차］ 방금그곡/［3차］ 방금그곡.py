@@ -1,44 +1,33 @@
 def solution(m, musicinfos):
-    answer = []
-    
-    def get_mins(time):
-        h, m = map(int, time.split(':'))
+
+    def to_mins(string):
+        h, m = map(int, string.split(':'))
         return h * 60 + m
     
-    # 음의 길이를 맞춰줌 (C#이 음 두개가 아니라 하나로 처리될 수 있게)
-    def normalize(s):
-        return (s.replace("C#", "c")
-                 .replace("D#", "d")
-                 .replace("F#", "f")
-                 .replace("G#", "g")
-                 .replace("A#", "a"))
+    parsed_infos = []
+    
+    for info in musicinfos:
+        start, end, title, notes = info.split(',')
+        playtime = to_mins(end) - to_mins(start)
 
-    m = normalize(m)
-    parsed_infos = [] # 제목, 악보, 재생시간
-    
-    # 악보 전처리
-    for idx, info in enumerate(musicinfos):
-        s, e, title, notes = info.split(',')
-        played = get_mins(e) - get_mins(s)
-        
-        notes = normalize(notes)
+        notes = notes.replace('C#', 'c').replace('D#', 'd').replace('F#', 'f').replace('G#', 'g').replace('A#', 'a')
         n = len(notes)
-        
-        # 재생시간 만큼 늘리기
-        base = notes # 원본 저장
-        if played > n:
-            q, r = divmod(played, n)
-            notes += base * q + base[:r]
+        if n >= playtime:
+            played = notes[:playtime]
         else:
-            notes = base[:played]
-            
-        parsed_infos.append([title, notes, played, idx])
-    
-    # 악보가 m을 포함하는지 확인
-    for title, notes, played, idx in parsed_infos: 
-        if m in notes:
-            answer.append([played, idx, title])
-                    
-    answer.sort(key=lambda x:(-x[0], x[1]))
+            played = notes * (playtime // n) + notes[:playtime % n]
         
-    return answer[0][-1] if answer else "(None)"
+        parsed_infos.append([played, playtime, title])
+                
+    m = m.replace('C#', 'c').replace('D#', 'd').replace('F#', 'f').replace('G#', 'g').replace('A#', 'a')
+    
+    answer = ''
+    max_p = 0
+    
+    for info in parsed_infos:
+        if m in info[0]:
+            if info[1] > max_p:
+                max_p = info[1]
+                answer = info[2]
+        
+    return answer if answer else '(None)'
