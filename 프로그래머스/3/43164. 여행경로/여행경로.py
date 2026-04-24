@@ -1,20 +1,27 @@
-from collections import defaultdict
-
 def solution(tickets):
-    routes = defaultdict(list) # {icn: [jfk], hnd: [iad], jfk: [hnd]}
-    for a, b in tickets:
-        routes[a].append(b) 
+    answer = []
+    n = len(tickets)
+    visited = [False] * n # 도시가 아니라 항공권을 관리
+    tickets.sort() # 알파벳 순 보장
     
-    for key in routes.keys():
-        routes[key].sort(reverse=True)
-    
-    path = []
-    
-    def dfs(port):
-        while routes[port]:
-            next_port = routes[port].pop()
-            dfs(next_port)
-        path.append(port)
+    def dfs(cur, path):
+        if len(path) == n + 1: # 첫 번째 정답만 찾고 바로 종료
+            answer.extend(path)
+            return True
         
-    dfs('ICN')
-    return path[::-1]
+        for i in range(n):
+            start, end = tickets[i]
+            
+            if not visited[i] and start == cur:
+                visited[i] = True
+                
+                if dfs(end, path + [end]):
+                    return True
+                
+                visited[i] = False
+        
+        return False
+    
+    dfs("ICN", ["ICN"])
+    
+    return answer
